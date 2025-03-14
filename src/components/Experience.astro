@@ -1,0 +1,50 @@
+---
+import "../styles/global.css"
+import Card from "./information/Card.astro";
+import CardExperience from "./information/CardExperience.astro";
+
+const infoCards = [
+    {
+        title: "VC@SOFT - Ingeiero CLOUD",
+        date: "2021 - Actualidad",
+        subtitle: "Remoto - 100% 📍",
+        imgCompany: "./images/vcsoft.png",
+        workDescription: `Realizo implementaciones para Bancolombia, creando y manteniendo API's en lenguaje de programación JAVA con herramientas como Springbooot y WebFlux, realizando pruebas unitarias y de integración con Junit y Mockito, implementando pruebas de carga con Jmeter, realizando despliegues en AWS y Azure. Y algunas tareas de DevOps
+        `,
+
+    },
+    {
+        title: "Freelance - Full Stack",
+        date: "Indefinidamente",
+        subtitle: "Remoto - 100% 📍",
+        imgCompany: "https://images.pexels.com/photos/5935787/pexels-photo-5935787.jpeg",
+        workDescription: `Realizo implementaciones para algunos clientes, proyectos personales y proyectos openSource, implemento soluciones de backend con Java y SpringBoot (WebFlux), y frontend con Astro, React, HTML, CSS y JS. proyectos tales como páginas web estáticas y dinámicas, blogs, e-commerce, entre otros.
+        `,
+
+    },
+]
+
+
+---
+
+<div class="mt-20 pb-30">
+    <div>
+        <h1 id="experienceId" class="text-4xl text-center">EXPERIENCIA</h1>
+        <div class="flex flex-col flex-wrap justify-center items-center">
+            {
+                infoCards.map((card) => (
+                    <CardExperience
+                    title={card.title}
+                    subtitle={card.subtitle} 
+                    imgCompany={card.imgCompany} 
+                    workDescription={card.workDescription}
+                    date={card.date}
+                    />
+                ))
+            }
+        </div>
+    </div>
+</div>
+
+
+

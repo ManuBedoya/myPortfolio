@@ -1,0 +1,16 @@
+---
+import "../../styles/global.css"
+
+const {title, img, imgDesc, description}  = Astro.props
+---
+
+<div class="col-auto">
+    <img src={img} alt={imgDesc} class="size-2/3 w-full"/>
+    <h2 class="text-2xl font-semibold mt-10">
+        {title}
+    </h2>
+    <p>
+        {description}
+    </p>
+    <a href="#" class="font-bold md:hover:text-2xl md:hover:text-sky-500 transiton duration-300">Ver mas</a>
+</div>
