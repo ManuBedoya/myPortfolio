@@ -1,0 +1,76 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+
+---
+
+<Layout>
+    <div class="text-white text-center bg-black md:m-auto md:size-full md:pl-50">
+        <h1 class="text-4xl">Blog filosofias</h1>
+        <p>
+            Este es un blog el cual cuenta con un home con N posts sobre temas relacionados a filosofias de vida donde se pueden crear nuevos posts, editar y eliminar cada uno de ellos.
+        </p>
+        <h2>
+            Desarrollo
+        </h2>
+        <p>
+            Esta plataforma se desarrollo con el framework Django proveniente del lenguaje de programación python y con ayuda de tailwind para su macketado y estética
+        </p>
+        <h2>
+            Instalacion
+        </h2>
+        <p>
+            La instalación del proyecto es muy sencilla, siga las instrucciones:
+            <br>
+            Abra su terminal y ejecute los siguientes comandos
+            <div class="grid grid-cols-1 gap-2 text-left ml-12 mb-12">
+                <div>
+                    $ git clone https://github.com/ManuBedoya/blogFilosofias.git
+                </div>
+                <div>
+                    $ cd blogFilosofias
+                </div>
+                <div>
+                    $ pip install -r requirements.txt
+                </div>
+                <div>
+                    $ python manage.py runserver                
+                </div>
+            </div>
+            <p>
+                En una terminal aparte correr el siguiente comando <br><br>
+                $ python manage.py tailwind start
+            </p>
+        </p>
+        <div>
+            <h2>
+                Pantallazos
+            </h2>
+            <img class="mt-10 size-2/3 m-auto" src="./images/blogFilosofias.png" alt="imagen">
+        </div>
+
+        <h2>
+            Autor
+        </h2>
+        <p id="author">
+            Manuel Bedoya - manuelfernandobedoya@gmail.com
+        </p>
+    </div>
+</Layout>
+
+<style>
+    #author{
+        margin-top: 0px;
+    }
+    p{
+        text-align: left;
+        margin: 3rem 3rem 2rem 3rem;
+    }
+
+    h2{
+        text-align: left;
+        margin-left: 3rem;
+        font-size: x-large;
+        font-weight: bold;
+    }
+</style>

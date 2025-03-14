@@ -7,19 +7,22 @@ const infoCards = [
         title: "Blog Filosofia",
         img: "./images/blogFilosofias.png",
         imgDesc: "Imagen blog filosofias",
-        description: "Blog con temática de las diferentes filosofias del mundo"
+        description: "Blog con temática de las diferentes filosofias del mundo",
+        page: "blogFilosofias"
     },
     {
         title: "Bot Instagram",
         img: "https://i.blogs.es/759769/trucosinstagram/1366_2000.webp",
         imgDesc: "Imagen blog filosofias",
-        description: "Bot que puede publicar y dejar de seguir cuentas en instagram"
+        description: "Bot que puede publicar y dejar de seguir cuentas en instagram",
+        page: "blogFilosofias"
     },
     {
         title: "Clon AirBnB (Console)",
         img: "https://user-images.githubusercontent.com/70924466/124042441-78e9a300-d9ce-11eb-9eac-4b600f571267.png",
         imgDesc: "Imagen blog filosofias",
-        description: "Linea de comandos para las funcionalidades de AirBnB"
+        description: "Linea de comandos para las funcionalidades de AirBnB",
+        page: "cloneAirBnB"
     }
 ]
 
@@ -36,6 +39,7 @@ const infoCards = [
                 img={card.img} 
                 imgDesc={card.imgDesc}
                 description={card.description}
+                page={card.page}
                 />
             ))
         }

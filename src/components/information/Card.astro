@@ -1,7 +1,7 @@
 ---
 import "../../styles/global.css"
 
-const {title, img, imgDesc, description}  = Astro.props
+const {title, img, imgDesc, description, page}  = Astro.props
 ---
 
 <div class="col-auto pb-5 md:pb-0 lg:flex lg:flex-col">
@@ -12,5 +12,5 @@ const {title, img, imgDesc, description}  = Astro.props
     <p class="mb-5 lg:mb-0">
         {description}
     </p>
-    <a href="#" class="font-bold border-2 lg:border-0 rounded-lg p-2 m-2 lg:p-0 lg:m-0  lg:hover:text-3xl hover:text-sky-500 transiton duration-300 md:text-2xl">Ver mas</a>
+    <a href={page} target="_blank" class="font-bold border-2 lg:border-0 rounded-lg p-2 m-2 lg:p-0 lg:m-0  lg:hover:text-3xl hover:text-sky-500 transiton duration-300 md:text-2xl">Ver mas</a>
 </div>
