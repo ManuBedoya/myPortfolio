@@ -4,13 +4,13 @@ import "../../styles/global.css"
 const {title, img, imgDesc, description}  = Astro.props
 ---
 
-<div class="col-auto pb-5 md:pb-0">
-    <img src={img} alt={imgDesc} class="size-2/3 w-full mt-20 md:mt-0"/>
+<div class="col-auto pb-5 md:pb-0 lg:flex lg:flex-col">
+    <img src={img} alt={imgDesc} class="size-2/3 w-full mt-20 md:mt-0 lg:w-full"/>
     <h2 class="text-2xl font-semibold mt-10">
         {title}
     </h2>
-    <p class="mb-5 md:mb-0">
+    <p class="mb-5 lg:mb-0">
         {description}
     </p>
-    <a href="#" class="font-bold border-2 md:border-0 rounded-lg p-2 m-2 md:p-0 md:m-0  md:hover:text-2xl md:hover:text-sky-500 transiton duration-300">Ver mas</a>
+    <a href="#" class="font-bold border-2 lg:border-0 rounded-lg p-2 m-2 lg:p-0 lg:m-0  lg:hover:text-2xl hover:text-sky-500 transiton duration-300 md:text-2xl">Ver mas</a>
 </div>
