@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+import Page from "../components/navigation/Page.astro";
+
+const infoPage = {
+    title: "Bot Social Media",
+    description: "Este repositorio de código abierto ofrece una herramienta para automatizar la gestión de contenido en Instagram. Su versión inicial simplifica la publicación periódica de contenido, permitiendo la programación de publicaciones automáticas. Además, incluye una función para optimizar la lista de seguidores, identificando y dejando de seguir a aquellos usuarios que no devuelven el seguimiento. Para mayor control, se puede especificar una lista de cuentas que se desean mantener, incluso si no siguen de vuelta. Este proyecto busca simplificar la interacción con Instagram, proporcionando una solución para mantener una presencia activa y eficiente en la plataforma, con la flexibilidad de personalizar la gestión de seguidores.",
+    images: "./images/botSocialMedia/imgExcelSocialMedia.png,./images/botSocialMedia/imgExceptionList.png,./images/botSocialMedia/imgUserDelete.png"
+    }
+---
+
+<Layout>
+    <Page 
+    title={infoPage.title}
+    description={infoPage.description}
+    images={infoPage.images}
+    />
+</Layout>

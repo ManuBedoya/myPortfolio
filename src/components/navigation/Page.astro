@@ -1,0 +1,40 @@
+---
+const { title, description, images} = Astro.props;
+---
+
+<div class="overflow-x-hidden bg-gradient-to-t from-black via-violet-900 to-black text-white text-center md:size-full md:pl-100 md:pr-100">
+    <h1 class="text-4xl">{title}</h1>
+    {description.split(".").map((paragraph: string) => (
+        <p>{paragraph}</p>
+    ))}
+    <div>
+        {images.split(",").map((image: string) => (
+            <img src={image} alt="imagen" class="mt-10 lg:size-2/3 m-auto"/>
+        ))}
+    </div>
+
+    <h2>
+        Autor
+    </h2>
+    <p id="author">
+        Manuel Bedoya - manuelfernandobedoya@gmail.com
+    </p>
+</div>
+
+
+<style>
+    #author{
+        margin-top: 0px;
+    }
+    p{
+        text-align: left;
+        margin: 3rem 3rem 2rem 3rem;
+    }
+
+    h2{
+        text-align: left;
+        margin-left: 3rem;
+        font-size: x-large;
+        font-weight: bold;
+    }
+</style>
