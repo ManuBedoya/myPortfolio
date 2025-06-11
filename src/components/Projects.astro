@@ -1,0 +1,42 @@
+---
+import ProjectCard from './projects/ProjectCard.astro';
+import { projects } from '../data/projects';
+---
+
+<section id="projects" class="py-16 md:py-24 bg-gradient-to-br from-[#1a1a1a] to-[#4A148C] fade-in-section">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-12 text-violet-light">
+            Portafolio: Historias de Éxito y Transformación Digital
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project) => (
+                <ProjectCard project={project} />
+            ))}
+        </div>
+        <div class="text-center mt-12">
+            <a href="#" class="inline-block bg-gradient-to-r from-violet-deep to-primary-dark text-white py-3 px-8 rounded-full text-lg font-semibold shadow-md hover:opacity-90 transition-colors duration-300">
+                Ver Todos los Proyectos
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('opacity-100');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('#projects').forEach((section) => {
+        observer.observe(section);
+    });
+</script> 

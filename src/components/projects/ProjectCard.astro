@@ -1,0 +1,37 @@
+---
+import type { Project } from '../../data/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<div class="bg-gradient-to-br from-[#2c2c2c] to-[#1a1a1a] rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-all duration-300 flex flex-col">
+    <div class="relative">
+        <img src={project.image} alt={project.title} class="w-full h-48 object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+            <div class="text-white">
+                <h3 class="text-xl font-bold mb-2">{project.title}</h3>
+                <p class="text-sm">{project.description}</p>
+            </div>
+        </div>
+    </div>
+    <div class="p-6 flex flex-col flex-grow">
+        <div class="flex flex-wrap gap-2 mb-4">
+            {project.technologies.map((tech) => (
+                <span class="px-3 py-1 bg-[#4A148C] bg-opacity-20 text-white rounded-full text-sm font-medium">{tech}</span>
+            ))}
+        </div>
+        <p class="text-[#B0B0B0] mb-4 flex-grow">
+            {project.description}
+        </p>
+        <div class="mt-auto">
+            <a href={project.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#8E24AA] to-[#4A148C] text-white py-2 px-6 rounded-lg text-sm font-semibold shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 hover:translate-y-[-2px] hover:shadow-[0_4px_10px_rgba(142,36,170,0.4)]">
+                <i class="ph-bold ph-arrow-right"></i>
+                Ver Caso de Estudio
+            </a>
+        </div>
+    </div>
+</div> 
