@@ -7,11 +7,14 @@ import '@fontsource/poppins/700.css';
 interface Props {
 	title: string;
 	description?: string;
+	/** Keep utility pages (e.g. the form thank-you page) out of search results. */
+	noindex?: boolean;
 }
 
 const {
 	title,
 	description = 'Portafolio de Manuel Bedoya - Desarrollador Full Stack',
+	noindex = false,
 } = Astro.props;
 ---
 
@@ -21,6 +24,7 @@ const {
 		<meta charset="UTF-8" />
 		<meta name="description" content={description}>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
