@@ -1,7 +1,7 @@
 ---
 title: Zetta 55
 summary: Sitio web para un proyecto de apartamentos en alquiler en Chapinero, Bogotá, con contenido administrable por el cliente.
-image: ../../assets/projects/zetta55.png
+image: ../../assets/projects/zetta55.webp
 imageAlt: Fachada del edificio Zetta 55
 stack:
   - Astro
