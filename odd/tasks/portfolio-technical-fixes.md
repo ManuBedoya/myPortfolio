@@ -63,13 +63,21 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 
 | Task | Route | Commit | Review |
 |---|---|---|---|
-| T1 | inline (mechanical deletions, refs checked with `rg`) | see `git log` (`chore: remove unused components and assets`) | pending assess |
-| T2 | delegated writer | 746fcc1 | pending assess |
-| T3 | delegated writer | 3b48dd7 | pending assess |
-| T4 | delegated writer | 588e895 | pending assess |
-| T5 | delegated writer | 95da170; hero source is 288x288, so width/height 288 (576 would upscale) | pending assess |
-| T6 | delegated writer | see `git log` (`fix(motion): make section reveal progressive and motion-safe`) | pending assess |
+| T1 | inline (mechanical deletions, refs checked with `rg`) | see `git log` (`chore: remove unused components and assets`) | approved (review-54ab2098f7fb3986) |
+| T2 | delegated writer | 746fcc1 | approved (review-54ab2098f7fb3986) |
+| T3 | delegated writer | 3b48dd7 | approved (review-54ab2098f7fb3986) |
+| T4 | delegated writer | 588e895 | approved (review-54ab2098f7fb3986) |
+| T5 | delegated writer | 95da170; hero source is 288x288, so width/height 288 (576 would upscale) | approved (review-54ab2098f7fb3986) |
+| T6 | delegated writer | see `git log` (`fix(motion): make section reveal progressive and motion-safe`) | approved (review-54ab2098f7fb3986) |
+
+## Review
+
+- Assess: medium (`package-lock.json` config change), `slice_budget_reached` (740 lines, main..6ab1d51). User granted consent.
+- Outcome: approved by reliability lens, acknowledged. Advisory (non-blocking) follow-ups:
+  - R3-reveal-module-dependency — `js` class is set inline in `<head>` but reveal logic lives in the bundled body script; if it fails, sections stay hidden. Fix: CSS/timeout fallback.
+  - R3-no-automated-reveal-check — no automated check for no-JS / reduced-motion reveal.
+  - R3-bg-opacity-noop — `bg-opacity-20` in `ProjectCard.astro:25` is a no-op in Tailwind v4.
 
 ## Next step
 
-T2–T6 committed (PR B slice). Run review assess on the slice, then open PR B under the `stacked-to-main` strategy (user decision).
+Fix R3-reveal-module-dependency and R3-bg-opacity-noop as a small follow-up, then tasks 7–12 (design/content) as a new feature. Push and PRs (stacked-to-main: PR A = 376e8f4, PR B = 746fcc1..6ab1d51) are the user's decision.
