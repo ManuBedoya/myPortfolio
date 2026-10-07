@@ -1,38 +1,53 @@
 ---
-import type { Project } from '../../data/projects';
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import Icon from '../icons/Icon.astro';
 
 interface Props {
-  project: Project;
+  project: CollectionEntry<'projects'>;
 }
 
 const { project } = Astro.props;
+const { title, summary, image, imageAlt, stack, highlights, url } = project.data;
 ---
 
-<div class="bg-gradient-to-br from-light-bg to-primary-dark rounded-xl overflow-hidden shadow-lg transform hover:scale-105 transition-all duration-300 flex flex-col">
-    <div class="relative">
-        <img src={project.image} alt={project.title} class="w-full h-48 object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-primary-dark to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-            <div class="text-white">
-                <h3 class="text-xl font-bold mb-2">{project.title}</h3>
-                <p class="text-sm">{project.description}</p>
-            </div>
-        </div>
-    </div>
+<article class="bg-gradient-to-br from-light-bg to-primary-dark rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(142,36,170,0.35)] flex flex-col">
+    <Image
+        src={image}
+        alt={imageAlt}
+        widths={[400, 800]}
+        sizes="(min-width: 768px) 480px, 100vw"
+        class="w-full aspect-[1200/630] object-cover"
+    />
     <div class="p-6 flex flex-col flex-grow">
-        <div class="flex flex-wrap gap-2 mb-4">
-            {project.technologies.map((tech) => (
-                <span class="px-3 py-1 bg-violet-deep text-white rounded-full text-sm font-medium">{tech}</span>
+        <h3 class="text-2xl font-bold mb-2 text-heading">{title}</h3>
+        <p class="text-muted-light mb-4">{summary}</p>
+        <ul class="flex flex-wrap gap-2 mb-4" aria-label="Tecnologías">
+            {stack.map((tech) => (
+                <li class="px-3 py-1 bg-violet-deep text-white rounded-full text-sm font-medium">{tech}</li>
             ))}
-        </div>
-        <p class="text-muted-light mb-4 flex-grow">
-            {project.description}
-        </p>
-        <div class="mt-auto">
-            <a href={project.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-violet-light to-violet-deep text-white py-2 px-6 rounded-lg text-sm font-semibold shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 hover:translate-y-[-2px] hover:shadow-[0_4px_10px_rgba(142,36,170,0.4)]">
+        </ul>
+        {highlights.length > 0 && (
+            <ul class="list-disc list-inside text-light-text text-sm space-y-1 mb-6">
+                {highlights.slice(0, 3).map((item) => <li>{item}</li>)}
+            </ul>
+        )}
+        <div class="mt-auto flex flex-wrap gap-3">
+            <a
+                href={`/proyectos/${project.id}/`}
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-violet-mid to-violet-deep text-white py-2 px-5 rounded-lg text-sm font-semibold shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 hover:translate-y-[-2px]"
+            >
                 <Icon name="arrow-right" class="size-[1em]" />
-                Ver Caso de Estudio
+                Ver caso<span class="sr-only"> de {title}</span>
+            </a>
+            <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 border border-heading/60 text-heading py-2 px-5 rounded-lg text-sm font-semibold transition-colors duration-300 hover:bg-heading/10"
+            >
+                Ver sitio<span class="sr-only"> de {title} (se abre en una pestaña nueva)</span>
             </a>
         </div>
     </div>
-</div> 
+</article>

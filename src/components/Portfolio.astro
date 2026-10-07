@@ -1,6 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import ProjectCard from './projects/ProjectCard.astro';
-import { projects } from '../data/projects';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+
+const gridClass =
+  projects.length === 1
+    ? 'grid-cols-1 max-w-2xl mx-auto'
+    : projects.length === 2
+      ? 'grid-cols-1 md:grid-cols-2 max-w-5xl mx-auto'
+      : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
 ---
 
 <section id="projects" class="py-16 md:py-24 fade-in-section">
@@ -8,10 +17,8 @@ import { projects } from '../data/projects';
         <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-heading">
             Proyectos
         </h2>
-        <div class={`grid gap-8 ${projects.length === 1 ? 'grid-cols-1 max-w-2xl mx-auto' : projects.length === 2 ? 'grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
-            {projects.map((project) => (
-                <ProjectCard project={project} />
-            ))}
+        <div class:list={['grid gap-8', gridClass]}>
+            {projects.map((project) => <ProjectCard project={project} />)}
         </div>
     </div>
-</section> 
+</section>

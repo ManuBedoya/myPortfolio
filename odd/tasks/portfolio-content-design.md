@@ -37,7 +37,7 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 ## Tasks
 
 - [x] T1 — Visual and navigation: accessible heading color token (≥ 4.5:1 on `primary-dark`), shorter headings, sticky header with anchor nav + accessible mobile menu, integrate `CTA.astro` before the footer, dynamic footer year.
-- [ ] T2 — Data-driven sections: `src/data/services.ts` + `ServiceCard.astro`; projects as an Astro content collection (`src/content/projects/*.md`, typed schema: title, summary, image, stack, highlights, url, featured, order); add Zetta55 (local image from its og:image) and migrate Freshcold; fix `ProjectCard` (single description, no hover-only content, correct link labels); remove `src/data/projects.ts`.
+- [x] T2 — Data-driven sections: `src/data/services.ts` + `ServiceCard.astro`; projects as an Astro content collection (`src/content/projects/*.md`, typed schema: title, summary, image, stack, highlights, url, featured, order); add Zetta55 (local image from its og:image) and migrate Freshcold; fix `ProjectCard` (single description, no hover-only content, correct link labels); remove `src/data/projects.ts`.
 - [ ] T3 — Case-study pages: `/proyectos/[slug]` rendering collection body (context, solution, stack, highlights, live link) with shared layout and back navigation; cards link to them.
 - [ ] T4 — Contact section: Netlify Forms (`data-netlify`, honeypot, labels, required fields, `action="/gracias"`), thank-you page, nav link; WhatsApp kept as secondary channel.
 - [ ] T5 — SEO: `site` in `astro.config.mjs`, `@astrojs/sitemap`, `public/robots.txt`, canonical, Open Graph/Twitter tags with per-page title/description/image, `Person` JSON-LD.
@@ -70,6 +70,7 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 | Task | Route | Commit | Review |
 |---|---|---|---|
 | T1 | delegated writer (run 1) | see git log | pending assess |
+| T2 | delegated writer (run 1) | see git log | pending assess |
 
 ## Next step
 
