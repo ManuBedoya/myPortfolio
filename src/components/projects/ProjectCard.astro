@@ -1,5 +1,6 @@
 ---
 import type { Project } from '../../data/projects';
+import Icon from '../icons/Icon.astro';
 
 interface Props {
   project: Project;
@@ -29,7 +30,7 @@ const { project } = Astro.props;
         </p>
         <div class="mt-auto">
             <a href={project.link} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-violet-light to-violet-deep text-white py-2 px-6 rounded-lg text-sm font-semibold shadow-lg transition-all duration-300 ease-in-out hover:opacity-90 hover:translate-y-[-2px] hover:shadow-[0_4px_10px_rgba(142,36,170,0.4)]">
-                <i class="ph-bold ph-arrow-right"></i>
+                <Icon name="arrow-right" class="size-[1em]" />
                 Ver Caso de Estudio
             </a>
         </div>
