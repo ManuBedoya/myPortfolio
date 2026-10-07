@@ -35,7 +35,7 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 - [x] T2 — Tailwind v4 theme: move palette to `@theme` in `global.css`, drop v3 directives, delete `tailwind.config.mjs`, replace hardcoded hex classes with theme tokens.
 - [x] T3 — Fonts: keep Inter variable (+ Poppins weights in use), remove Onest, Luckiest Guy, Google Fonts link and preconnects; uninstall unused packages.
 - [x] T4 — Replace Phosphor CDN script with inline SVG icon components.
-- [ ] T5 — Assets: fix favicon path, rename `profilePhoto.webP` → `profile-photo.webp`, use `astro:assets` `<Image>` with explicit dimensions for the hero photo, add `initial-scale=1` to viewport.
+- [x] T5 — Assets: fix favicon path, rename `profilePhoto.webP` → `profile-photo.webp`, use `astro:assets` `<Image>` with explicit dimensions for the hero photo, add `initial-scale=1` to viewport.
 - [ ] T6 — Single fade-in implementation: one observer in the layout, content visible without JS (progressive enhancement class on `<html>`), respect `prefers-reduced-motion`.
 
 ## Acceptance criteria
@@ -66,7 +66,8 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 | T1 | inline (mechanical deletions, refs checked with `rg`) | see `git log` (`chore: remove unused components and assets`) | pending assess |
 | T2 | delegated writer | 746fcc1 | pending assess |
 | T3 | delegated writer | 3b48dd7 | pending assess |
-| T4 | delegated writer | see `git log` (`perf(icons): replace Phosphor CDN script with inline SVG`) | pending assess |
+| T4 | delegated writer | 588e895 | pending assess |
+| T5 | delegated writer | see `git log` (`fix(assets): serve favicon and optimize hero photo`); hero source is 288x288, so width/height 288 (576 would upscale) | pending assess |
 
 ## Next step
 
