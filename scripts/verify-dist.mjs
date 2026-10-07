@@ -20,9 +20,9 @@
 // entry at the bottom only runs when this file is executed directly.
 
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 const error = (check, message) => `[${check}] ${message}`;
 
@@ -273,4 +273,15 @@ function main() {
   console.log(`verify-dist: OK (${pages.length} pages; CSP hashes, anchors, project links, featured projects, contact form, SEO).`);
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();
+// Compare real paths: Node resolves import.meta.url through symlinks but argv[1] is not,
+// so a plain URL comparison would silently skip the check in symlinked checkouts.
+function isDirectRun() {
+  if (!process.argv[1]) return false;
+  try {
+    return realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
+  } catch {
+    return false;
+  }
+}
+
+if (isDirectRun()) main();
