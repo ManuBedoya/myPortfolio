@@ -45,11 +45,14 @@
            hover:shadow-[0_8px_16px_rgba(37,211,102,0.6)] flex items-center justify-center;
   }
 
-  .fade-in-section {
-    @apply opacity-0 translate-y-5 transition-all duration-700 ease-out;
-  }
+  /* Sections are only hidden when JS is available (html.js) and motion is allowed. */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .fade-in-section {
+      @apply opacity-0 translate-y-5 transition-all duration-700 ease-out;
+    }
 
-  .fade-in-section.is-visible {
-    @apply opacity-100 translate-y-0;
+    .js .fade-in-section.is-visible {
+      @apply opacity-100 translate-y-0;
+    }
   }
 }

@@ -36,7 +36,7 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 - [x] T3 — Fonts: keep Inter variable (+ Poppins weights in use), remove Onest, Luckiest Guy, Google Fonts link and preconnects; uninstall unused packages.
 - [x] T4 — Replace Phosphor CDN script with inline SVG icon components.
 - [x] T5 — Assets: fix favicon path, rename `profilePhoto.webP` → `profile-photo.webp`, use `astro:assets` `<Image>` with explicit dimensions for the hero photo, add `initial-scale=1` to viewport.
-- [ ] T6 — Single fade-in implementation: one observer in the layout, content visible without JS (progressive enhancement class on `<html>`), respect `prefers-reduced-motion`.
+- [x] T6 — Single fade-in implementation: one observer in the layout, content visible without JS (progressive enhancement class on `<html>`), respect `prefers-reduced-motion`.
 
 ## Acceptance criteria
 
@@ -67,8 +67,9 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 | T2 | delegated writer | 746fcc1 | pending assess |
 | T3 | delegated writer | 3b48dd7 | pending assess |
 | T4 | delegated writer | 588e895 | pending assess |
-| T5 | delegated writer | see `git log` (`fix(assets): serve favicon and optimize hero photo`); hero source is 288x288, so width/height 288 (576 would upscale) | pending assess |
+| T5 | delegated writer | 95da170; hero source is 288x288, so width/height 288 (576 would upscale) | pending assess |
+| T6 | delegated writer | see `git log` (`fix(motion): make section reveal progressive and motion-safe`) | pending assess |
 
 ## Next step
 
-Start T2 (delegated writer: T2–T6 touch 2+ non-trivial files).
+T2–T6 committed (PR B slice). Run review assess on the slice, then open PR B under the `stacked-to-main` strategy (user decision).
