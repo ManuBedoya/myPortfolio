@@ -13,30 +13,22 @@
 //
 // No dependencies: plain regex scanning of the generated HTML is enough here
 // because Astro emits predictable, double-quoted attributes.
+//
+// Every check is a pure function over strings (plus an `exists(relPath)`
+// callback for files under dist/) that returns a list of error messages, so
+// scripts/verify-dist.test.mjs can exercise them with inline fixtures. The CLI
+// entry at the bottom only runs when this file is executed directly.
 
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const DIST = join(ROOT, 'dist');
-const NETLIFY_TOML = join(ROOT, 'netlify.toml');
-
-const errors = [];
-const fail = (check, message) => errors.push(`[${check}] ${message}`);
+const error = (check, message) => `[${check}] ${message}`;
 
 // ---------- helpers ----------
 
-function listHtmlFiles(dir) {
-  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(dir, entry.name);
-    if (entry.isDirectory()) return listHtmlFiles(path);
-    return entry.name.endsWith('.html') ? [path] : [];
-  });
-}
-
-function getAttr(tag, name) {
+export function getAttr(tag, name) {
   const match = tag.match(new RegExp(`\\s${name}(?:="([^"]*)")?(?=[\\s/>])`, 'i'));
   if (!match) return undefined;
   return match[1] ?? '';
@@ -44,7 +36,7 @@ function getAttr(tag, name) {
 
 const NON_EXECUTABLE_TYPES = new Set(['application/ld+json', 'application/json']);
 
-function inlineExecutableScripts(html) {
+export function inlineExecutableScripts(html) {
   const scripts = [];
   for (const match of html.matchAll(/(<script\b[^>]*>)([\s\S]*?)<\/script>/gi)) {
     const [, openTag, body] = match;
@@ -56,33 +48,70 @@ function inlineExecutableScripts(html) {
   return scripts;
 }
 
-const sha256 = (text) => `sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}`;
+export const sha256 = (text) => `sha256-${createHash('sha256').update(text, 'utf8').digest('base64')}`;
 
-function cspHashes() {
-  if (!existsSync(NETLIFY_TOML)) {
-    fail('a', 'netlify.toml is missing.');
-    return new Set();
-  }
-  const toml = readFileSync(NETLIFY_TOML, 'utf8');
-  const csp = toml.match(/Content-Security-Policy\s*=\s*"([^"]*)"/);
-  if (!csp) {
-    fail('a', 'netlify.toml has no Content-Security-Policy header.');
-    return new Set();
-  }
-  if (/script-src[^;]*'unsafe-inline'/.test(csp[1])) {
-    fail('a', "CSP script-src must not use 'unsafe-inline'.");
-  }
-  return new Set(csp[1].match(/sha256-[A-Za-z0-9+/=]+/g) ?? []);
+export function idsIn(html) {
+  return new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
 }
 
-function idsIn(html) {
-  return new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]));
+// Reads the Content-Security-Policy of the `[[headers]]` block whose
+// `for = "/*"`. Commented lines are ignored, and a CSP in any other block
+// (e.g. `/_astro/*`) does not count. Returns `{ csp, errors }`.
+export function cspFromToml(toml) {
+  if (toml == null) return { csp: undefined, errors: [error('a', 'netlify.toml is missing.')] };
+
+  const blocks = [];
+  let current;
+  for (const rawLine of toml.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (line === '' || line.startsWith('#')) continue;
+    if (/^\[\[\s*headers\s*\]\]/.test(line)) {
+      current = { for: undefined, csps: [] };
+      blocks.push(current);
+      continue;
+    }
+    // Any other array-of-tables header closes the current [[headers]] block;
+    // its own sub-tables (`[headers.values]`) keep it open.
+    if (/^\[\[/.test(line) || (/^\[/.test(line) && !/^\[\s*headers\./.test(line))) {
+      current = undefined;
+      continue;
+    }
+    if (!current) continue;
+    const forMatch = line.match(/^for\s*=\s*"([^"]*)"/);
+    if (forMatch) current.for = forMatch[1];
+    const cspMatch = line.match(/^"?Content-Security-Policy"?\s*=\s*"([^"]*)"/);
+    if (cspMatch) current.csps.push(cspMatch[1]);
+  }
+
+  const csps = blocks.filter((block) => block.for === '/*').flatMap((block) => block.csps);
+  if (csps.length === 0) {
+    return {
+      csp: undefined,
+      errors: [error('a', 'netlify.toml has no Content-Security-Policy header for "/*".')],
+    };
+  }
+  if (csps.length > 1) {
+    return {
+      csp: undefined,
+      errors: [error('a', `netlify.toml has ${csps.length} Content-Security-Policy headers for "/*"; expected exactly one.`)],
+    };
+  }
+  return { csp: csps[0], errors: [] };
+}
+
+export function cspHashes(toml) {
+  const { csp, errors } = cspFromToml(toml);
+  if (csp === undefined) return { hashes: new Set(), errors };
+  if (/script-src[^;]*'unsafe-inline'/.test(csp)) {
+    errors.push(error('a', "CSP script-src must not use 'unsafe-inline'."));
+  }
+  return { hashes: new Set(csp.match(/sha256-[A-Za-z0-9+/=]+/g) ?? []), errors };
 }
 
 // ---------- checks ----------
 
-function checkCspHashes(pages) {
-  const allowed = cspHashes();
+export function checkCspHashes(pages, toml) {
+  const { hashes: allowed, errors } = cspHashes(toml);
   const used = new Map(); // hash -> files that contain the script
   for (const { file, html } of pages) {
     for (const body of inlineExecutableScripts(html)) {
@@ -92,33 +121,50 @@ function checkCspHashes(pages) {
   }
   for (const [hash, files] of used) {
     if (!allowed.has(hash)) {
-      fail('a', `inline script '${hash}' (in ${files.join(', ')}) is not in netlify.toml CSP script-src.`);
+      errors.push(error('a', `inline script '${hash}' (in ${files.join(', ')}) is not in netlify.toml CSP script-src.`));
     }
   }
   for (const hash of allowed) {
-    if (!used.has(hash)) fail('a', `netlify.toml CSP has stale hash '${hash}' (no inline script uses it).`);
+    if (!used.has(hash)) errors.push(error('a', `netlify.toml CSP has stale hash '${hash}' (no inline script uses it).`));
   }
+  return errors;
 }
 
-function checkAnchors(pages, homeIds) {
+export function checkAnchors(pages, homeIds) {
+  const errors = [];
   for (const { file, html } of pages) {
     const pageIds = idsIn(html);
     for (const [, path, id] of html.matchAll(/href="(\/?)#([^"]+)"/g)) {
       // `/#id` targets the home page; a bare `#id` targets the current page.
       const ids = path === '/' ? homeIds : pageIds;
-      if (!ids.has(id)) fail('b', `${file}: link to '${path}#${id}' has no matching id.`);
+      if (!ids.has(id)) errors.push(error('b', `${file}: link to '${path}#${id}' has no matching id.`));
     }
   }
+  return errors;
 }
 
-function checkProjectLinks(pages) {
+// `exists(relPath)` answers whether a file exists relative to dist/.
+export function checkProjectLinks(pages, exists) {
+  const errors = [];
   for (const { file, html } of pages) {
     for (const [, slug] of html.matchAll(/href="\/proyectos\/([^"/#?]+)\/?"/g)) {
-      if (!existsSync(join(DIST, 'proyectos', slug, 'index.html'))) {
-        fail('c', `${file}: link to /proyectos/${slug}/ has no built page.`);
+      if (!exists(join('proyectos', slug, 'index.html'))) {
+        errors.push(error('c', `${file}: link to /proyectos/${slug}/ has no built page.`));
       }
     }
   }
+  return errors;
+}
+
+// The home `#projects` section must list at least one project card; an empty
+// `featured` set would otherwise ship an empty section with a green build.
+export function checkFeaturedProjects(homeHtml) {
+  const section = homeHtml.match(/<section\b[^>]*\sid="projects"[^>]*>([\s\S]*?)<\/section>/);
+  if (!section) return [error('c', 'dist/index.html has no <section id="projects">.')];
+  if (!/href="\/proyectos\/[^"/#?]+\/"/.test(section[1])) {
+    return [error('c', 'dist/index.html #projects lists no /proyectos/<slug>/ card (no featured project?).')];
+  }
+  return [];
 }
 
 function isWrappedInLabel(formHtml, index) {
@@ -126,18 +172,20 @@ function isWrappedInLabel(formHtml, index) {
   return before.lastIndexOf('<label') > before.lastIndexOf('</label>');
 }
 
-function checkContactForm(homeHtml) {
+export function checkContactForm(homeHtml) {
+  const errors = [];
+  const fail = (message) => errors.push(error('d', message));
   const match = homeHtml.match(/(<form\b[^>]*\sname="contact"[^>]*>)([\s\S]*?)<\/form>/);
   if (!match) {
-    fail('d', 'dist/index.html has no <form name="contact">.');
-    return;
+    fail('dist/index.html has no <form name="contact">.');
+    return errors;
   }
   const [, formTag, body] = match;
-  if (getAttr(formTag, 'data-netlify') !== 'true') fail('d', 'contact form lacks data-netlify="true".');
-  if (getAttr(formTag, 'netlify-honeypot') !== 'bot-field') fail('d', 'contact form lacks netlify-honeypot="bot-field".');
-  if (!/<input\b[^>]*\sname="bot-field"/.test(body)) fail('d', 'contact form lacks the bot-field honeypot input.');
+  if (getAttr(formTag, 'data-netlify') !== 'true') fail('contact form lacks data-netlify="true".');
+  if (getAttr(formTag, 'netlify-honeypot') !== 'bot-field') fail('contact form lacks netlify-honeypot="bot-field".');
+  if (!/<input\b[^>]*\sname="bot-field"/.test(body)) fail('contact form lacks the bot-field honeypot input.');
   if (!/<input\b(?=[^>]*\stype="hidden")(?=[^>]*\sname="form-name")(?=[^>]*\svalue="contact")[^>]*>/.test(body)) {
-    fail('d', 'contact form lacks the hidden form-name="contact" input.');
+    fail('contact form lacks the hidden form-name="contact" input.');
   }
 
   const labelTargets = new Set([...body.matchAll(/<label\b[^>]*\sfor="([^"]+)"/g)].map((m) => m[1]));
@@ -146,52 +194,83 @@ function checkContactForm(homeHtml) {
     if (getAttr(tag, 'type') === 'hidden') continue;
     const id = getAttr(tag, 'id');
     const labelled = (id && labelTargets.has(id)) || isWrappedInLabel(body, control.index);
-    if (!labelled) fail('d', `contact form control '${getAttr(tag, 'name') ?? tag}' has no <label>.`);
+    if (!labelled) fail(`contact form control '${getAttr(tag, 'name') ?? tag}' has no <label>.`);
   }
+  return errors;
 }
 
-function checkSeo(pages) {
+export function checkSeo(pages, exists) {
+  const errors = [];
+  const fail = (message) => errors.push(error('e', message));
   for (const name of ['sitemap-index.xml', 'robots.txt']) {
-    if (!existsSync(join(DIST, name))) fail('e', `dist/${name} is missing.`);
+    if (!exists(name)) fail(`dist/${name} is missing.`);
   }
   for (const { file, html } of pages) {
     const canonical = html.match(/<link\b[^>]*\srel="canonical"[^>]*>/);
     if (!canonical || !/^https:\/\//.test(getAttr(canonical[0], 'href') ?? '')) {
-      fail('e', `${file}: missing absolute canonical link.`);
+      fail(`${file}: missing absolute canonical link.`);
     }
     const ogImage = html.match(/<meta\b[^>]*\sproperty="og:image"[^>]*>/);
     const ogImageUrl = ogImage && getAttr(ogImage[0], 'content');
     if (!ogImageUrl || !/^https:\/\//.test(ogImageUrl)) {
-      fail('e', `${file}: missing absolute og:image.`);
-    } else if (!existsSync(join(DIST, decodeURIComponent(new URL(ogImageUrl).pathname)))) {
-      fail('e', `${file}: og:image '${ogImageUrl}' is not in dist.`);
+      fail(`${file}: missing absolute og:image.`);
+    } else if (!exists(decodeURIComponent(new URL(ogImageUrl).pathname).replace(/^\/+/, ''))) {
+      fail(`${file}: og:image '${ogImageUrl}' is not in dist.`);
     }
   }
+  return errors;
 }
 
-// ---------- main ----------
-
-if (!existsSync(join(DIST, 'index.html'))) {
-  console.error('verify-dist: dist/index.html not found. Run `astro build` first.');
-  process.exit(1);
+// Runs every check. `toml` is the netlify.toml text (or null when missing).
+export function verifyDist({ pages, homeHtml, toml, exists }) {
+  return [
+    ...checkCspHashes(pages, toml),
+    ...checkAnchors(pages, idsIn(homeHtml)),
+    ...checkProjectLinks(pages, exists),
+    ...checkFeaturedProjects(homeHtml),
+    ...checkContactForm(homeHtml),
+    ...checkSeo(pages, exists),
+  ];
 }
 
-const pages = listHtmlFiles(DIST).map((path) => ({
-  file: relative(ROOT, path),
-  html: readFileSync(path, 'utf8'),
-}));
-const homeHtml = readFileSync(join(DIST, 'index.html'), 'utf8');
+// ---------- CLI ----------
 
-checkCspHashes(pages);
-checkAnchors(pages, idsIn(homeHtml));
-checkProjectLinks(pages);
-checkContactForm(homeHtml);
-checkSeo(pages);
-
-if (errors.length > 0) {
-  console.error(`verify-dist: ${errors.length} problem(s) found in dist/:`);
-  for (const error of errors) console.error(`  - ${error}`);
-  process.exit(1);
+function listHtmlFiles(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return listHtmlFiles(path);
+    return entry.name.endsWith('.html') ? [path] : [];
+  });
 }
 
-console.log(`verify-dist: OK (${pages.length} pages; CSP hashes, anchors, project links, contact form, SEO).`);
+function main() {
+  const ROOT = fileURLToPath(new URL('..', import.meta.url));
+  const DIST = join(ROOT, 'dist');
+  const NETLIFY_TOML = join(ROOT, 'netlify.toml');
+
+  if (!existsSync(join(DIST, 'index.html'))) {
+    console.error('verify-dist: dist/index.html not found. Run `astro build` first.');
+    process.exit(1);
+  }
+
+  const pages = listHtmlFiles(DIST).map((path) => ({
+    file: relative(ROOT, path),
+    html: readFileSync(path, 'utf8'),
+  }));
+  const errors = verifyDist({
+    pages,
+    homeHtml: readFileSync(join(DIST, 'index.html'), 'utf8'),
+    toml: existsSync(NETLIFY_TOML) ? readFileSync(NETLIFY_TOML, 'utf8') : null,
+    exists: (relPath) => existsSync(join(DIST, relPath)),
+  });
+
+  if (errors.length > 0) {
+    console.error(`verify-dist: ${errors.length} problem(s) found in dist/:`);
+    for (const message of errors) console.error(`  - ${message}`);
+    process.exit(1);
+  }
+
+  console.log(`verify-dist: OK (${pages.length} pages; CSP hashes, anchors, project links, featured projects, contact form, SEO).`);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();

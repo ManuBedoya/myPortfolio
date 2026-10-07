@@ -93,6 +93,15 @@ From review `review-e7c42c525c096f93` on T1–T3:
 - R3-unverified-acceptance — fixed by T6 `scripts/verify-dist.mjs` (postbuild).
 - R3-build-time-year — accepted: Netlify rebuilds on every push, so the build-time footer year stays current.
 
+## Review follow-ups (run 3)
+
+Slice review of T4–T6 (`review-5ed40013aa521d33`) and the whole-branch review (`review-4e4780fefd4dc75a`) were both approved. Their advisory findings are fixed:
+- R3-verifier-untested — fixed: `scripts/verify-dist.mjs` now exports pure check functions (CLI runs only when executed directly) and `scripts/verify-dist.test.mjs` covers them with inline fixtures (`node:test`, no new deps). `npm test`: 24 tests, 6 suites, 24 pass, 0 fail.
+- R3-featured-empty-unguarded — fixed: `checkFeaturedProjects` fails when `dist/index.html` `<section id="projects">` contains no `/proyectos/<slug>/` card link (or the section is missing). Also confirmed via the CLI by removing the card links from `dist/index.html` (exit 1).
+- R3-csp-first-match — fixed: `cspFromToml` skips commented lines, reads the CSP only from the `[[headers]]` block with `for = "/*"`, and fails when that block has zero or more than one CSP.
+
+RED observed before the fix: 8 of 24 tests failed (4 CSP-scoping, 4 featured-cards); GREEN after: 24/24. `npm run build` ends with `verify-dist: OK (4 pages; ...)`. `npm test` uses the glob `'scripts/*.test.mjs'` because on Node 24 `node --test scripts/` resolves the directory as one module and fails.
+
 ## Next step
 
 All tasks done. Next: native review assessment of the F0–T6 commits, then PRs per the planned slices.
