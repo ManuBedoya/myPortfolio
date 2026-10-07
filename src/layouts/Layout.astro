@@ -9,13 +9,28 @@ interface Props {
 	description?: string;
 	/** Keep utility pages (e.g. the form thank-you page) out of search results. */
 	noindex?: boolean;
+	/** Social preview image as a root-relative or absolute URL. */
+	image?: string;
+	imageAlt?: string;
+	type?: 'website' | 'article';
+	/** JSON-LD object rendered as structured data in <head>. */
+	structuredData?: Record<string, unknown>;
 }
 
 const {
 	title,
 	description = 'Portafolio de Manuel Bedoya - Desarrollador Full Stack',
 	noindex = false,
+	image = '/og-default.png',
+	imageAlt = 'Manuel Bedoya, desarrollador de software',
+	type = 'website',
+	structuredData,
 } = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+// Escape `<` so the serialized JSON can never close the surrounding <script>.
+const structuredDataJson = structuredData && JSON.stringify(structuredData).replace(/</g, '\\u003c');
 ---
 
 <!DOCTYPE html>
@@ -28,6 +43,25 @@ const {
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<link rel="canonical" href={canonicalUrl} />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+
+		<meta property="og:type" content={type} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:image:alt" content={imageAlt} />
+		<meta property="og:locale" content="es_CO" />
+		<meta property="og:site_name" content="Manuel Bedoya" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl} />
+		<meta name="twitter:image:alt" content={imageAlt} />
+
+		{structuredDataJson && <script type="application/ld+json" set:html={structuredDataJson} />}
 		<script is:inline>document.documentElement.classList.add('js');</script>
 	</head>
 	<body class="bg-primary-dark text-white font-sans">

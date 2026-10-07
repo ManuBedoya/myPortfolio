@@ -40,7 +40,7 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 - [x] T2 — Data-driven sections: `src/data/services.ts` + `ServiceCard.astro`; projects as an Astro content collection (`src/content/projects/*.md`, typed schema: title, summary, image, stack, highlights, url, featured, order); add Zetta55 (local image from its og:image) and migrate Freshcold; fix `ProjectCard` (single description, no hover-only content, correct link labels); remove `src/data/projects.ts`.
 - [x] T3 — Case-study pages: `/proyectos/[slug]` rendering collection body (context, solution, stack, highlights, live link) with shared layout and back navigation; cards link to them.
 - [x] T4 — Contact section: Netlify Forms (`data-netlify`, honeypot, labels, required fields, `action="/gracias"`), thank-you page, nav link; WhatsApp kept as secondary channel.
-- [ ] T5 — SEO: `site` in `astro.config.mjs`, `@astrojs/sitemap`, `public/robots.txt`, canonical, Open Graph/Twitter tags with per-page title/description/image, `Person` JSON-LD.
+- [x] T5 — SEO: `site` in `astro.config.mjs`, `@astrojs/sitemap`, `public/robots.txt`, canonical, Open Graph/Twitter tags with per-page title/description/image, `Person` JSON-LD.
 - [ ] T6 — Security headers: `netlify.toml` (build settings + CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`/`frame-ancestors`), inline scripts allowed by SHA-256 hash, `postbuild` check that fails when hashes in `dist` don't match the CSP.
 
 ## Acceptance criteria
@@ -75,10 +75,12 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 | T3 | delegated writer (run 1) | see git log | approved (review-e7c42c525c096f93) |
 | F0 | delegated writer (run 2) | see git log | pending assess |
 | T4 | delegated writer (run 2) | see git log | pending assess |
+| T5 | delegated writer (run 2) | see git log | pending assess |
 
 ## Notes
 
 - T4: `CTA.astro` was merged into `Contact.astro` (`#contact`): one conversion section with the Netlify form as primary channel and WhatsApp as secondary link, instead of two consecutive call-to-action blocks. Header and footer link to `/#contact`.
+- T5: `@astrojs/sitemap` pinned to `3.3.1` (zod `^3.24.2`, dedupes with Astro 5.4.2; 3.7.x+ targets zod 4 / Astro 6). `/gracias/` is filtered from the sitemap and disallowed in `robots.txt`. Default OG image `public/og-default.png` (1200×630) generated once with sharp; case-study pages use a 1200px JPEG of the project cover via `getImage`.
 
 ## Review follow-ups (F0)
 
