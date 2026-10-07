@@ -1,56 +1,104 @@
 ---
 import "../styles/global.css";
-import '@fontsource-variable/onest';
-import '@fontsource/luckiest-guy';
-import '@fontsource/inter';
-import '@fontsource/poppins';
+import '@fontsource-variable/inter';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
 
 interface Props {
 	title: string;
+	description?: string;
+	/** Keep utility pages (e.g. the form thank-you page) out of search results. */
+	noindex?: boolean;
+	/** Social preview image as a root-relative or absolute URL. */
+	image?: string;
+	imageAlt?: string;
+	type?: 'website' | 'article';
+	/** JSON-LD object rendered as structured data in <head>. */
+	structuredData?: Record<string, unknown>;
 }
 
-const { title } = Astro.props;
+const {
+	title,
+	description = 'Portafolio de Manuel Bedoya - Desarrollador Full Stack',
+	noindex = false,
+	image = '/og-default.png',
+	imageAlt = 'Manuel Bedoya, desarrollador de software',
+	type = 'website',
+	structuredData,
+} = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+// Escape `<` so the serialized JSON can never close the surrounding <script>.
+const structuredDataJson = structuredData && JSON.stringify(structuredData).replace(/</g, '\\u003c');
 ---
 
 <!DOCTYPE html>
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Portafolio de Manuel Bedoya - Desarrollador Full Stack">
-		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={description}>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-		<script src="https://unpkg.com/@phosphor-icons/web"></script>
+		<link rel="canonical" href={canonicalUrl} />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+
+		<meta property="og:type" content={type} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={imageUrl} />
+		<meta property="og:image:alt" content={imageAlt} />
+		<meta property="og:locale" content="es_CO" />
+		<meta property="og:site_name" content="Manuel Bedoya" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={imageUrl} />
+		<meta name="twitter:image:alt" content={imageAlt} />
+
+		{structuredDataJson && <script type="application/ld+json" set:html={structuredDataJson} />}
+		<script is:inline>document.documentElement.classList.add('js');</script>
 	</head>
-	<body class="bg-[#1a1a1a] text-white font-['Inter']">
+	<body class="bg-primary-dark text-white font-sans">
 		<div class="absolute inset-0 -z-10 h-full w-full items-center [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
 		<slot/>
-		<script>
-			// JavaScript para la animación de las secciones
-			const sections = document.querySelectorAll('.fade-in-section');
+		<script is:inline>
+			// Reveal sections once as they enter the viewport.
+			// Inline on purpose: it ships in the same document as the `js` class set in <head>,
+			// so sections can never stay hidden because a separate bundle failed to load.
+			(function () {
+				var root = document.documentElement;
+				try {
+					var sections = document.querySelectorAll('.fade-in-section');
 
-			const observerOptions = {
-				root: null,
-				rootMargin: '0px',
-				threshold: 0.2
-			};
-
-			const observer = new IntersectionObserver((entries, observer) => {
-				entries.forEach(entry => {
-					if (entry.isIntersecting) {
-						entry.target.classList.add('is-visible');
-						observer.unobserve(entry.target);
+					if (!('IntersectionObserver' in window)) {
+						// Without observer support, show everything immediately.
+						root.classList.remove('js');
+						return;
 					}
-				});
-			}, observerOptions);
 
-			sections.forEach(section => {
-				observer.observe(section);
-			});
+					var observer = new IntersectionObserver(function (entries) {
+						entries.forEach(function (entry) {
+							if (entry.isIntersecting) {
+								entry.target.classList.add('is-visible');
+								observer.unobserve(entry.target);
+							}
+						});
+					}, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+
+					sections.forEach(function (section) {
+						observer.observe(section);
+					});
+				} catch (error) {
+					// Any failure falls back to fully visible content.
+					root.classList.remove('js');
+				}
+			})();
 		</script>
 	</body>
 </html>
@@ -63,7 +111,7 @@ const { title } = Astro.props;
 		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60%);
 	}
 	html {
-		font-family: 'Inter', system-ui, sans-serif;
+		font-family: var(--font-sans);
 		background: #1a1a1a;
 		background-size: 224px;
 	}

@@ -1,0 +1,107 @@
+---
+import Icon from './icons/Icon.astro';
+
+// Absolute anchors so the same header works on the home page and on sub-pages.
+const links = [
+  { href: '/#about', label: 'Sobre mí' },
+  { href: '/#services', label: 'Servicios' },
+  { href: '/#projects', label: 'Proyectos' },
+  { href: '/#contact', label: 'Contacto' },
+];
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-40 border-b border-light-bg/60 bg-primary-dark/90 backdrop-blur supports-[backdrop-filter]:bg-primary-dark/75"
+>
+  <div class="container mx-auto flex min-h-16 max-w-6xl flex-wrap items-center justify-between gap-x-6 px-4">
+    <a href="/#hero" class="py-4 font-heading text-lg font-bold text-white hover:text-heading">
+      Manuel <span class="text-accent-green">Bedoya</span>
+    </a>
+
+    <button
+      type="button"
+      id="nav-toggle"
+      class="nav-toggle hidden rounded-md p-2 text-white hover:bg-light-bg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heading md:hidden"
+      aria-controls="site-nav"
+      aria-expanded="false"
+    >
+      <span class="sr-only" data-label>Abrir menú</span>
+      <span data-icon-open><Icon name="list" class="size-6" /></span>
+      <span data-icon-close class="hidden"><Icon name="x" class="size-6" /></span>
+    </button>
+
+    <nav id="site-nav" aria-label="Principal" class="site-nav w-full pb-3 md:w-auto md:pb-0">
+      <ul class="flex flex-wrap gap-x-5 gap-y-2 md:flex-nowrap md:gap-x-8">
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="block py-1 text-light-text transition-colors hover:text-heading focus-visible:text-heading"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /*
+   * Progressive enhancement: without JS (or if the bundled script fails to load)
+   * the links render as a wrapped row on mobile. Only once the script marks the
+   * header as enhanced does the menu collapse behind the toggle button.
+   */
+  @media (max-width: 47.99rem) {
+    :global(#site-header[data-enhanced]) .nav-toggle {
+      display: inline-flex;
+    }
+
+    :global(#site-header[data-enhanced]) .site-nav:not(.is-open) {
+      display: none;
+    }
+
+    :global(#site-header[data-enhanced]) .site-nav ul {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  const header = document.getElementById('site-header');
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('site-nav');
+
+  if (header && toggle && nav) {
+    const label = toggle.querySelector('[data-label]');
+    const iconOpen = toggle.querySelector('[data-icon-open]');
+    const iconClose = toggle.querySelector('[data-icon-close]');
+
+    const setOpen = (open: boolean) => {
+      nav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      if (label) label.textContent = open ? 'Cerrar menú' : 'Abrir menú';
+      iconOpen?.classList.toggle('hidden', open);
+      iconClose?.classList.toggle('hidden', !open);
+    };
+
+    header.setAttribute('data-enhanced', '');
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    nav.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

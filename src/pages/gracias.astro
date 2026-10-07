@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/icons/Icon.astro';
+---
+
+<Layout
+  title="Mensaje enviado | Manuel Bedoya"
+  description="Gracias por tu mensaje. Te responderé pronto."
+  noindex
+>
+  <Header />
+  <main class="py-20 md:py-28">
+    <div class="container mx-auto px-4 max-w-2xl text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-heading mb-6">¡Gracias por escribirme!</h1>
+      <p class="text-lg text-light-text mb-10">
+        Recibí tu mensaje y te responderé al correo que indicaste lo antes posible.
+      </p>
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 bg-gradient-to-r from-violet-light to-violet-deep text-white py-3 px-8 rounded-lg font-semibold shadow-lg transition-all duration-300 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-heading"
+      >
+        <Icon name="arrow-right" class="size-[1em] rotate-180" />
+        Volver al inicio
+      </a>
+    </div>
+  </main>
+  <Footer />
+</Layout>

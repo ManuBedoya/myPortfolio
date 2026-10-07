@@ -1,42 +1,58 @@
 @import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --color-primary-dark: #1a1a1a;
+  --color-light-bg: #2c2c2c;
+  --color-violet-deep: #4A148C;
+  --color-violet-mid: #6A1B9A;
+  --color-violet-light: #8E24AA;
+  --color-accent-green: #2ECC71;
+  --color-accent-blue: #3498DB;
+  --color-light-text: #E0E0E0;
+  --color-muted-light: #B0B0B0;
+  /* Section headings: 9.85:1 on #1a1a1a, 6.71:1 on violet-deep (WCAG AA). */
+  --color-heading: #D8B4FE;
+
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+}
 
 @layer base {
-  :root {
-    --color-primary-dark: #1a1a1a;
-    --color-light-bg: #2c2c2c;
-    --color-violet-deep: #4A148C;
-    --color-violet-mid: #6A1B9A;
-    --color-violet-light: #8E24AA;
-    --color-accent-green: #2ECC71;
-    --color-accent-blue: #3498DB;
-    --color-dark-text: #1a1a1a;
-    --color-light-text: #E0E0E0;
-    --color-muted-light: #B0B0B0;
+  html {
+    /* Keep anchor targets clear of the sticky header. */
+    scroll-padding-top: 5rem;
+  }
+
+  /*
+   * Without JS the mobile header shows every nav link as a wrapped row:
+   * 4rem top bar + up to two 2rem link rows + 0.5rem row gap + 0.75rem bottom
+   * padding ≈ 9.25rem, so reserve 10rem until the menu can collapse.
+   */
+  @media (max-width: 47.99rem) {
+    html:not(.js) {
+      scroll-padding-top: 10rem;
+    }
   }
 
   body {
-    font-family: 'Inter', sans-serif;
-    color: #E0E0E0;
+    font-family: var(--font-sans);
+    color: var(--color-light-text);
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+    font-family: var(--font-heading);
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-[#2ECC71] text-[#1a1a1a] font-semibold py-3 px-6 rounded-lg 
+    @apply bg-accent-green text-primary-dark font-semibold py-3 px-6 rounded-lg 
            transition-all duration-300 ease-in-out hover:opacity-90 hover:translate-y-[-2px] 
            hover:shadow-[0_4px_10px_rgba(46,204,113,0.4)];
   }
 
   .btn-secondary {
-    @apply bg-[#3498DB] text-[#1a1a1a] font-semibold py-3 px-6 rounded-lg 
+    @apply bg-accent-blue text-primary-dark font-semibold py-3 px-6 rounded-lg 
            transition-all duration-300 ease-in-out hover:opacity-90 hover:translate-y-[-2px] 
            hover:shadow-[0_4px_10px_rgba(52,152,219,0.4)];
   }
@@ -47,15 +63,14 @@
            hover:shadow-[0_8px_16px_rgba(37,211,102,0.6)] flex items-center justify-center;
   }
 
-  .whatsapp-button i {
-    @apply text-3xl;
-  }
+  /* Sections are only hidden when JS is available (html.js) and motion is allowed. */
+  @media (prefers-reduced-motion: no-preference) {
+    .js .fade-in-section {
+      @apply opacity-0 translate-y-5 transition-all duration-700 ease-out;
+    }
 
-  .fade-in-section {
-    @apply opacity-0 translate-y-5 transition-all duration-700 ease-out;
-  }
-
-  .fade-in-section.is-visible {
-    @apply opacity-100 translate-y-0;
+    .js .fade-in-section.is-visible {
+      @apply opacity-100 translate-y-0;
+    }
   }
 }
