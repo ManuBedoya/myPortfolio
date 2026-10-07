@@ -6,16 +6,20 @@ import '@fontsource/poppins/700.css';
 
 interface Props {
 	title: string;
+	description?: string;
 }
 
-const { title } = Astro.props;
+const {
+	title,
+	description = 'Portafolio de Manuel Bedoya - Desarrollador Full Stack',
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Portafolio de Manuel Bedoya - Desarrollador Full Stack">
+		<meta name="description" content={description}>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
