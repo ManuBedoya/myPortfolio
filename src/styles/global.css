@@ -11,7 +11,7 @@
   --color-light-text: #E0E0E0;
   --color-muted-light: #B0B0B0;
 
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-heading: 'Poppins', sans-serif;
 }
 
