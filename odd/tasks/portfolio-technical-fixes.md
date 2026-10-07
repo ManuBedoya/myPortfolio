@@ -32,7 +32,7 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 ## Tasks
 
 - [x] T1 — Remove dead code: unused components (`components/Layout.astro`, `Projects.astro`, `footer/Footer.astro`, `information/*`), unused icons (GitHub, Instagram, LinkedIn), `src/assets/*`, unused images (`blogFilosofias`, `botSocialMedia`, `consoleAirBnB`, `vcsoft.png`, `profilePhoto.jpg`). Keep `CTA.astro` (planned for task 10).
-- [ ] T2 — Tailwind v4 theme: move palette to `@theme` in `global.css`, drop v3 directives, delete `tailwind.config.mjs`, replace hardcoded hex classes with theme tokens.
+- [x] T2 — Tailwind v4 theme: move palette to `@theme` in `global.css`, drop v3 directives, delete `tailwind.config.mjs`, replace hardcoded hex classes with theme tokens.
 - [ ] T3 — Fonts: keep Inter variable (+ Poppins weights in use), remove Onest, Luckiest Guy, Google Fonts link and preconnects; uninstall unused packages.
 - [ ] T4 — Replace Phosphor CDN script with inline SVG icon components.
 - [ ] T5 — Assets: fix favicon path, rename `profilePhoto.webP` → `profile-photo.webp`, use `astro:assets` `<Image>` with explicit dimensions for the hero photo, add `initial-scale=1` to viewport.
@@ -64,6 +64,7 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
 | Task | Route | Commit | Review |
 |---|---|---|---|
 | T1 | inline (mechanical deletions, refs checked with `rg`) | see `git log` (`chore: remove unused components and assets`) | pending assess |
+| T2 | delegated writer | see `git log` (`refactor(styles): move palette to Tailwind v4 theme`) | pending assess |
 
 ## Next step
 
