@@ -1,9 +1,11 @@
 ---
 import Icon from './icons/Icon.astro';
+
+const year = new Date().getFullYear();
 ---
 
 <footer class="bg-gradient-to-r from-primary-dark to-violet-deep text-white py-8 text-center text-sm border-t border-light-bg">
-    <p>&copy; 2025 Manuel Bedoya. Todos los derechos reservados.</p>
+    <p>&copy; {year} Manuel Bedoya. Todos los derechos reservados.</p>
     <p>Diseñado y desarrollado con <Icon name="heart" class="inline-block size-[1em] align-[-0.125em] text-red-500" /> por mí.</p>
     <p class="mt-2 text-muted-light">Puedes contactarme directamente a través del botón de WhatsApp en la esquina inferior derecha.</p>
 </footer>

@@ -10,12 +10,19 @@
   --color-accent-blue: #3498DB;
   --color-light-text: #E0E0E0;
   --color-muted-light: #B0B0B0;
+  /* Section headings: 9.85:1 on #1a1a1a, 6.71:1 on violet-deep (WCAG AA). */
+  --color-heading: #D8B4FE;
 
   --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
   --font-heading: 'Poppins', sans-serif;
 }
 
 @layer base {
+  html {
+    /* Keep anchor targets clear of the sticky header. */
+    scroll-padding-top: 5rem;
+  }
+
   body {
     font-family: var(--font-sans);
     color: var(--color-light-text);
