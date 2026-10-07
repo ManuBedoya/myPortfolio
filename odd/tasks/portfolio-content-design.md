@@ -41,7 +41,7 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 - [x] T3 — Case-study pages: `/proyectos/[slug]` rendering collection body (context, solution, stack, highlights, live link) with shared layout and back navigation; cards link to them.
 - [x] T4 — Contact section: Netlify Forms (`data-netlify`, honeypot, labels, required fields, `action="/gracias"`), thank-you page, nav link; WhatsApp kept as secondary channel.
 - [x] T5 — SEO: `site` in `astro.config.mjs`, `@astrojs/sitemap`, `public/robots.txt`, canonical, Open Graph/Twitter tags with per-page title/description/image, `Person` JSON-LD.
-- [ ] T6 — Security headers: `netlify.toml` (build settings + CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`/`frame-ancestors`), inline scripts allowed by SHA-256 hash, `postbuild` check that fails when hashes in `dist` don't match the CSP.
+- [x] T6 — Security headers: `netlify.toml` (build settings + CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`/`frame-ancestors`), inline scripts allowed by SHA-256 hash, `postbuild` check that fails when hashes in `dist` don't match the CSP.
 
 ## Acceptance criteria
 
@@ -76,11 +76,13 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 | F0 | delegated writer (run 2) | see git log | pending assess |
 | T4 | delegated writer (run 2) | see git log | pending assess |
 | T5 | delegated writer (run 2) | see git log | pending assess |
+| T6 | delegated writer (run 2) | see git log | pending assess |
 
 ## Notes
 
 - T4: `CTA.astro` was merged into `Contact.astro` (`#contact`): one conversion section with the Netlify form as primary channel and WhatsApp as secondary link, instead of two consecutive call-to-action blocks. Header and footer link to `/#contact`.
 - T5: `@astrojs/sitemap` pinned to `3.3.1` (zod `^3.24.2`, dedupes with Astro 5.4.2; 3.7.x+ targets zod 4 / Astro 6). `/gracias/` is filtered from the sitemap and disallowed in `robots.txt`. Default OG image `public/og-default.png` (1200×630) generated once with sharp; case-study pages use a 1200px JPEG of the project cover via `getImage`.
+- T6: the header menu script stays inlined by Astro (3 stable CSP hashes shared by every page; no extra request). `scripts/verify-dist.mjs` runs as `postbuild` and fails on missing/stale CSP hashes, broken `/#id`/`#id` anchors (bare `#id` is checked against the same page), missing `/proyectos/<slug>/` pages, an incomplete Netlify contact form, and missing sitemap/robots/canonical/absolute `og:image`. RED observed by altering one CSP hash (exit 1, missing + stale reported) and by mutating `dist/` for checks b–e; GREEN after restore.
 
 ## Review follow-ups (F0)
 
@@ -93,4 +95,4 @@ From review `review-e7c42c525c096f93` on T1–T3:
 
 ## Next step
 
-Delegated writer run 2: T4–T6.
+All tasks done. Next: native review assessment of the F0–T6 commits, then PRs per the planned slices.

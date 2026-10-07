@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Baseline security headers for every page.
+# script-src allows only same-origin files plus the exact inline scripts Astro
+# emits (the `js` class flag, the section reveal script and the header menu
+# module). `npm run build` runs scripts/verify-dist.mjs, which fails when these
+# hashes drift from the inline scripts in dist/.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-F9KLVC4YivQeAJmBoxLN+o6KL7scN3U2dpfEt2qugEM=' 'sha256-mr0bV3iLrDDLB2eo0K3BLCqh5jCF+oDwuLQq+zJO9Hc='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    X-Frame-Options = "DENY"
+
+# Astro fingerprints everything under /_astro/, so it can be cached forever.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
