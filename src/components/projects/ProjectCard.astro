@@ -22,7 +22,7 @@ const { project } = Astro.props;
     <div class="p-6 flex flex-col flex-grow">
         <div class="flex flex-wrap gap-2 mb-4">
             {project.technologies.map((tech) => (
-                <span class="px-3 py-1 bg-violet-deep bg-opacity-20 text-white rounded-full text-sm font-medium">{tech}</span>
+                <span class="px-3 py-1 bg-violet-deep text-white rounded-full text-sm font-medium">{tech}</span>
             ))}
         </div>
         <p class="text-muted-light mb-4 flex-grow">

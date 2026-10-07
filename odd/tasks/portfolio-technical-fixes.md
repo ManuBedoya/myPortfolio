@@ -78,6 +78,13 @@ Tasks 1–6 of the review plan. Out of scope: copy changes, contrast/palette red
   - R3-no-automated-reveal-check — no automated check for no-JS / reduced-motion reveal.
   - R3-bg-opacity-noop — `bg-opacity-20` in `ProjectCard.astro:25` is a no-op in Tailwind v4.
 
+## Follow-up (advisory findings)
+
+- [x] F1 — R3-reveal-module-dependency: reveal script moved to `is:inline` in the same document as the `js` class; `try/catch` and missing-IntersectionObserver both remove `js` so content stays visible. Route: inline (2 small files). Check: build OK, no external JS in `dist`, Node DOM-stub simulation (IO → kept, no IO → removed, throw → removed).
+- [x] F2 — R3-bg-opacity-noop: removed no-op `bg-opacity-20` (keeps current solid chip look).
+- [ ] F3 — R3-no-automated-reveal-check: deferred; project has no test runner.
+- Second review: approved (review-de615df92f332cef).
+
 ## Next step
 
-Fix R3-reveal-module-dependency and R3-bg-opacity-noop as a small follow-up, then tasks 7–12 (design/content) as a new feature. Push and PRs (stacked-to-main: PR A = 376e8f4, PR B = 746fcc1..6ab1d51) are the user's decision.
+Tasks 7–12 (design/content) as a new feature. Push and PRs (stacked-to-main: PR A = 376e8f4, PR B = 746fcc1..HEAD) are the user's decision.
