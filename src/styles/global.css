@@ -23,6 +23,17 @@
     scroll-padding-top: 5rem;
   }
 
+  /*
+   * Without JS the mobile header shows every nav link as a wrapped row:
+   * 4rem top bar + up to two 2rem link rows + 0.5rem row gap + 0.75rem bottom
+   * padding ≈ 9.25rem, so reserve 10rem until the menu can collapse.
+   */
+  @media (max-width: 47.99rem) {
+    html:not(.js) {
+      scroll-padding-top: 10rem;
+    }
+  }
+
   body {
     font-family: var(--font-sans);
     color: var(--color-light-text);

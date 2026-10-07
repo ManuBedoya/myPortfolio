@@ -2,7 +2,11 @@
 import { getCollection } from 'astro:content';
 import ProjectCard from './projects/ProjectCard.astro';
 
-const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+// Only featured projects appear on the home page; `id` breaks ties so the
+// order stays stable when two entries share the same `order` value.
+const projects = (await getCollection('projects', ({ data }) => data.featured)).sort(
+  (a, b) => a.data.order - b.data.order || a.id.localeCompare(b.id),
+);
 
 const gridClass =
   projects.length === 1

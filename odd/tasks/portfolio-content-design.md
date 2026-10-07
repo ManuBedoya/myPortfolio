@@ -69,10 +69,21 @@ Out of scope: Astro major upgrade, analytics, i18n, blog, automated browser test
 
 | Task | Route | Commit | Review |
 |---|---|---|---|
-| T1 | delegated writer (run 1) | see git log | pending assess |
-| T2 | delegated writer (run 1) | see git log | pending assess |
-| T3 | delegated writer (run 1) | see git log | pending assess |
+| T1 | delegated writer (run 1) | see git log | approved (review-e7c42c525c096f93) |
+| T2 | delegated writer (run 1) | see git log | approved (review-e7c42c525c096f93) |
+| T2 fix | direct | c270859 (Zetta55 cover as compressed WebP) | approved (review-e7c42c525c096f93) |
+| T3 | delegated writer (run 1) | see git log | approved (review-e7c42c525c096f93) |
+| F0 | delegated writer (run 2) | see git log | pending assess |
+
+## Review follow-ups (F0)
+
+From review `review-e7c42c525c096f93` on T1–T3:
+- R3-order-tie-nondeterminism — fixed: projects sort by `order`, then `id`.
+- R3-featured-unused — fixed: home Portfolio lists only `featured` entries.
+- R3-scroll-padding-nojs — fixed: `html:not(.js)` uses a 10rem scroll offset on small screens (wrapped no-JS nav).
+- R3-unverified-acceptance — fixed by T6 `scripts/verify-dist.mjs` (postbuild).
+- R3-build-time-year — accepted: Netlify rebuilds on every push, so the build-time footer year stays current.
 
 ## Next step
 
-Delegate T1–T3 to one writer.
+Delegated writer run 2: T4–T6.
